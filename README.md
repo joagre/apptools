@@ -5,10 +5,8 @@ A set of services and libraries to make it easier to write applications and daem
 ## Files
 
 <dl>
-  <dt>./src/config_serv.erl</dt>
   <dd>An extendible config server which makes it possible for applications to have data driven config files in JSON format</dd>
   <dt>./src/log_serv.erl</dt>
-  <dd>An extendible log server which makes it possible for applications to create/filter log messages in various ways</dd>
   <dt>./src/test_engine.erl</dt>
   <dd>Used by the ./mixmesh/bin/run_test command to make it easy to start a test</dd>
   <dt>./src/serv.erl</dt>
