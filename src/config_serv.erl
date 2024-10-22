@@ -1190,7 +1190,7 @@ edit_config_merge([OldObjectArray|Rest], [])
   when is_list(OldObjectArray) ->
     [OldObjectArray|Rest];
 edit_config_merge([OldObjectArray|OldJsonTerm],
-                  [[{Name, Value}|Rest] = NewObjectArray|NewJsonTerm])
+                  [[{Name, Value}|_Rest] = NewObjectArray|NewJsonTerm])
   when is_list(OldObjectArray) ->
     case lists:keysearch(Name, 1, OldObjectArray) of
         {value, {_, Value}} ->

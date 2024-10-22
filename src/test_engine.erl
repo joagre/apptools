@@ -4,7 +4,7 @@
 -include("../include/shorthand.hrl").
 
 %%
-%% Exported: test
+%% Exported: start
 %%
 
 -spec start([binary()]) -> no_return().

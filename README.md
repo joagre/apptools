@@ -6,9 +6,9 @@ A set of services and libraries to make it easier to write applications and daem
 
 <dl>
   <dd>An extendible config server which makes it possible for applications to have data driven config files in JSON format</dd>
-  <dt>./src/log_serv.erl</dt>
+  <dt>./src/config_serv.erl</dt>
   <dt>./src/test_engine.erl</dt>
-  <dd>Used by the ./mixmesh/bin/run_test command to make it easy to start a test</dd>
+  <dd>A Erlang test engine</dd>
   <dt>./src/serv.erl</dt>
   <dd>A light-weight gen_server replacement which brings the fun back to server programming</dd>
   <dt>./include/bits.hrl</dt>

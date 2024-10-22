@@ -12,7 +12,7 @@
 
 -export_type([name/0, spawn_server_result/0]).
 
--include_lib("kernel/include/logger.hrl").
+-include_lib("apptools/include/log.hrl").
 -include("../include/serv.hrl").
 
 -type name() :: atom() | pid().
@@ -94,10 +94,10 @@ register_server(Name) ->
 loop(MessageHandler, State) ->
     case MessageHandler(State) of
         stop ->
-            stopped;
+            exit(normal);
         {stop, {Pid, Ref}, Reply} ->
             Pid ! {reply, Ref, Reply},
-            stopped;
+            exit(normal);
         {reply, {Pid, Ref}, Reply} ->
             Pid ! {reply, Ref, Reply},
             loop(MessageHandler, State);
@@ -121,7 +121,7 @@ loop(MessageHandler, State) ->
         {swap_message_handler, NewMessageHandler, NewState} ->
             loop(NewMessageHandler, NewState);
         UnknownMessage ->
-            throw({unknown_message, UnknownMessage})
+            throw({bad_return_value, UnknownMessage})
     end.
 
 %%
@@ -136,7 +136,7 @@ cast(To, Request) when is_pid(To) ->
 cast(To, Request) ->
     case whereis(To) of
         undefined ->
-            ?LOG_ERROR(#{bad => {To, Request}}),
+            ?log_error(#{bad => {To, Request}}),
             throw(badarg);
         Pid ->
             Pid ! {cast, Request},

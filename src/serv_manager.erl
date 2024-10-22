@@ -2,7 +2,7 @@
 -export([start_link/0, stop/0, add_process/1, reload_processes/1]).
 -export([message_handler/1]).
 
--include_lib("kernel/include/logger.hrl").
+-include_lib("apptools/include/log.hrl").
 -include_lib("apptools/include/serv.hrl").
 
 %%
@@ -60,39 +60,41 @@ reload_processes(ModuleName) ->
 %%
 
 init(Parent) ->
-    ?LOG_INFO("Serv Manager has been started"),
+    ?log_info("Serv Manager has been started"),
     {ok, #{parent => Parent, processes => #{}}}.
 
 message_handler(#{parent := Parent, processes := Processes} = State) ->
     receive
         {call, From, stop = Call} ->
-            ?LOG_DEBUG(#{call => Call}),
+            ?log_debug(#{call => Call}),
             {stop, From, ok};
         {cast, {add_process, Pid} = Cast} ->
-            ?LOG_DEBUG(#{cast => Cast}),
+            ?log_debug(#{cast => Cast}),
             MonitorRef = monitor(process, Pid),
             {noreply, State#{processes =>
                                  maps:put(Pid, MonitorRef, Processes)}};
         {cast, {reload_processes, _ModuleName} = Cast} ->
-            ?LOG_DEBUG(#{cast => Cast}),
+            ?log_debug(#{cast => Cast}),
             ok = calm_down(),
             ok = maps:fold(
                    fun(Pid, _MonitorRef, ok) ->
-                           ?LOG_DEBUG(#{reload => Pid}),
-                           catch begin Pid ! {system, undefined, code_switch} end,
+                           ?log_debug(#{reload => Pid}),
+                           catch begin
+                                     Pid ! {system, undefined, code_switch}
+                                 end,
                            ok
                    end, ok, Processes),
             noreply;
         {'DOWN', _Ref, process, Pid, Info} ->
-            ?LOG_DEBUG(#{'DOWN' => Info}),
-            {noreply, State#{processes => maps:delete(Processes, Pid)}};
+            ?log_debug(#{'DOWN' => Info}),
+            {noreply, State#{processes => maps:remove(Pid, Processes)}};
         {system, From, Request} ->
-            ?LOG_DEBUG(#{system => Request}),
+            ?log_debug(#{system => Request}),
             {system, From, Request};
         {'EXIT', Parent, Reason} ->
             exit(Reason);
         UnknownMessage ->
-            ?LOG_ERROR(#{unknown_message => UnknownMessage}),
+            ?log_error(#{unknown_message => UnknownMessage}),
             noreply
     end.
 
